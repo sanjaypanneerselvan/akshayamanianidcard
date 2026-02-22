@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Akshaya M | Xpertio</title>
+  <meta name="description" content="Digital ID Card – Akshaya M, CXO at Xpertio" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:  #0a2463;
+      --blue-mid:   #1e5fc4;
+      --blue-light: #3a86ff;
+      --white:      #ffffff;
+      --soft-bg:    #f0f6ff;
+      --border:     #dbeafe;
+      --text-dark:  #0d1b3e;
+      --text-muted: #5a7ab5;
+    }
+
+    html, body {
+      min-height: 100%;
+    }
+
+    body {
+      background: linear-gradient(160deg, #0a2463 0%, #1a4faa 45%, #3a86ff 100%);
+      background-attachment: fixed;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* floating glow blobs */
+    .blob { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.18; pointer-events: none; z-index: 0; }
+    .blob-1 { width: 380px; height: 380px; background: #60a5fa; top: -120px; left: -100px; animation: blobMove1 9s ease-in-out infinite alternate; }
+    .blob-2 { width: 300px; height: 300px; background: #93c5fd; bottom: -80px; right: -80px; animation: blobMove2 11s ease-in-out infinite alternate; }
+    @keyframes blobMove1 { to { transform: translate(40px,40px) scale(1.12); } }
+    @keyframes blobMove2 { to { transform: translate(-40px,-30px) scale(1.08); } }
+
+    /* ============ CARD ============ */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 30px;
+      width: 100%;
+      max-width: 430px;
+      box-shadow: 0 40px 90px rgba(10,36,99,0.45), 0 0 0 1px rgba(255,255,255,0.25);
+      overflow: hidden;
+      animation: slideUp 0.85s cubic-bezier(0.34,1.4,0.64,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(70px) scale(0.94); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* -------- HEADER -------- */
+    .card-header {
+      background: linear-gradient(140deg, #0a2463 0%, #1e5fc4 60%, #3a86ff 100%);
+      padding: 26px 24px 90px;
+      position: relative;
+      overflow: visible;
+    }
+    /* subtle pattern overlay */
+    .card-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* NFC badge */
+    .nfc-badge {
+      position: absolute;
+      top: 18px; right: 20px;
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      z-index: 2;
+    }
+    .nfc-badge::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.25);
+      animation: nfcPulse 2.2s ease-out infinite;
+    }
+    @keyframes nfcPulse {
+      0%   { transform: scale(1);   opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* Company logo */
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative; 
+      z-index: 2;
+    }
+    .logo-pill {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.15);
+    }
+    .logo-img {
+      height: 46px;
+      width: auto;
+      max-width: 200px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.75rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 500;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Profile photo — sits half-outside the header */
+    .profile-outer {
+      position: absolute;
+      bottom: -64px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    .profile-ring {
+      width: 128px;
+      height: 128px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, #3a86ff, #0a2463);
+      box-shadow: 0 10px 35px rgba(10,36,99,0.45);
+    }
+    .profile-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      border: 3px solid #fff;
+      display: block;
+    }
+
+    /* verified tick */
+    .verified-tick {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+
+    /* -------- BODY -------- */
+    .card-body {
+      padding: 80px 24px 28px;
+      text-align: center;
+    }
+
+    .name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .role {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--blue-mid);
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .company-line {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .company-line strong { color: var(--blue-dark); font-weight: 700; }
+
+    /* dots */
+    .dots {
+      display: flex; gap: 5px; justify-content: center; margin-bottom: 20px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+    .dot.on { background: var(--blue-light); }
+
+    /* -------- QUOTE -------- */
+    .quote {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-left: 4px solid var(--blue-light);
+      border-radius: 14px;
+      padding: 14px 16px 14px 18px;
+      margin-bottom: 22px;
+      text-align: left;
+      position: relative;
+    }
+    .quote-mark {
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--blue-light);
+      opacity: 0.3;
+      position: absolute;
+      top: 2px; left: 10px;
+      font-family: Georgia, serif;
+    }
+    .quote p {
+      padding-left: 28px;
+      font-size: 0.875rem;
+      color: var(--text-dark);
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    /* -------- SECTION DIVIDER -------- */
+    .sec {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+    .sec::before, .sec::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #c7d8f0, transparent);
+    }
+
+    /* -------- INFO ITEMS -------- */
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--soft-bg);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 11px 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .info-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 18px rgba(58,134,255,0.14);
+    }
+    .info-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .info-text .lbl {
+      font-size: 0.69rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .info-text .val {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* -------- STATS -------- */
+    .stats {
+      display: flex;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      border-radius: 18px;
+      padding: 18px 10px;
+      margin-bottom: 22px;
+      box-shadow: 0 6px 20px rgba(10,36,99,0.25);
+    }
+    .stat { flex: 1; text-align: center; }
+    .stat-num {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .stat-lbl {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .stat-sep { width: 1px; background: rgba(255,255,255,0.18); }
+
+    /* -------- SKILLS -------- */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+    .skill {
+      background: var(--soft-bg);
+      border: 1.5px solid var(--border);
+      color: var(--blue-dark);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 50px;
+      transition: all 0.2s;
+    }
+    .skill:hover { background: var(--blue-mid); color: #fff; border-color: var(--blue-mid); }
+
+    /* -------- PROJECTS -------- */
+    .projects { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+    .proj-card {
+      background: var(--soft-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 15px;
+      text-align: left;
+    }
+    .proj-title { font-weight: 700; font-size: 0.875rem; color: var(--text-dark); margin-bottom: 3px; }
+    .proj-desc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* -------- BUTTONS -------- */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 13px 10px;
+      border-radius: 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+    .btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); filter: brightness(1.06); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-full  { grid-column: span 2; padding: 15px; font-size: 0.95rem; background: linear-gradient(135deg, #0a2463, #3a86ff); color: #fff; box-shadow: 0 6px 22px rgba(58,134,255,0.38); }
+    .btn-call  { background: #e8f4ff; color: #0a2463; }
+    .btn-email { background: #e8f4ff; color: #0a2463; }
+    .btn-wa    { background: linear-gradient(135deg,#25d366,#128c7e); color: #fff; }
+    .btn-li    { background: linear-gradient(135deg,#0077b5,#004f7c); color: #fff; }
+
+    /* -------- SECOND QUOTE -------- */
+    .quote2 {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 0;
+      text-align: center;
+    }
+    .quote2 p {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.87rem;
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    /* -------- FOOTER -------- */
+    .card-footer {
+      background: var(--blue-dark);
+      padding: 14px 24px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+      line-height: 1.7;
+    }
+    .card-footer strong { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 440px) {
+      .name { font-size: 1.5rem; }
+      .card-body { padding: 78px 18px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="card">
+
+    <!-- ===== HEADER ===== -->
+    <div class="card-header">
+      <!-- NFC pulse -->
+      <div class="nfc-badge">📡</div>
+
+      <!-- Company Logo -->
+      <div class="logo-wrap">
+        <div class="logo-pill">
+          <img src="logo.png" alt="Xpertio" class="logo-img" onerror="this.parentElement.style.display='none'" />
+        </div>
+      </div>
+
+      <p class="header-subtitle">✦ Digital Identity Card ✦</p>
+
+      <!-- Profile photo -->
+      <div class="profile-outer">
+        <div class="profile-ring">
+          <img src="IMG_9452.JPG" alt="Akshaya M" class="profile-img"
+               onerror="this.style.background='#1e5fc4'; this.alt='A';" />
+        </div>
+        <div class="verified-tick">✔</div>
+      </div>
+    </div>
+
+    <!-- ===== CARD BODY ===== -->
+    <div class="card-body">
+
+      <!-- Name -->
+      <div class="name">✨ Akshaya M</div>
+      <div class="role">💼 CXO</div>
+      <div class="company-line">🏢 <strong>Xpertio Technologies</strong> &nbsp;|&nbsp; 📍 Madurai, TN</div>
+
+      <div class="dots">
+        <div class="dot on"></div><div class="dot"></div><div class="dot on"></div><div class="dot"></div><div class="dot on"></div>
+      </div>
+
+      <!-- Quote 1 -->
+      <div class="quote">
+        <span class="quote-mark">"</span>
+        <p>Innovation is seeing what everybody has seen and thinking what nobody has thought. 🚀 Let's build something extraordinary together!</p>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="sec">📬 Contact</div>
+      <div class="info-list">
+        <a href="tel:+919360864338" class="info-item">
+          <div class="info-icon">📱</div>
+          <div class="info-text">
+            <div class="lbl">Mobile</div>
+            <div class="val">+91 93608 64338</div>
+          </div>
+        </a>
+        <a href="mailto:akshayamanian07@gmail.com" class="info-item">
+          <div class="info-icon">📧</div>
+          <div class="info-text">
+            <div class="lbl">Email</div>
+            <div class="val">akshayamanian07@gmail.com</div>
+          </div>
+        </a>
+        <div class="info-item">
+          <div class="info-icon">🏠</div>
+          <div class="info-text">
+            <div class="lbl">Address</div>
+            <div class="val">Aanaiyur, Madurai</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🎓</div>
+          <div class="info-text">
+            <div class="lbl">Education</div>
+            <div class="val">MCA — PSG College of Technology, Coimbatore</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">7.38</div>
+          <div class="stat-lbl">📊 CGPA</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat">
+          <div class="stat-num">MCA</div>
+          <div class="stat-lbl">🏛️ Degree</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-lbl">💯 Dedication</div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="sec">⚡ Skills</div>
+      <div class="skills">
+        <span class="skill">☕ Java</span>
+        <span class="skill">🌐 JavaScript</span>
+        <span class="skill">🐍 Python</span>
+        <span class="skill">🗄️ SQL</span>
+        <span class="skill">🟢 Node.js</span>
+        <span class="skill">🚂 Express.js</span>
+        <span class="skill">🍃 MongoDB</span>
+        <span class="skill">🔥 Firebase</span>
+        <span class="skill">🧠 Data Structures</span>
+        <span class="skill">🔒 Web Security</span>
+        <span class="skill">🐙 Git/GitHub</span>
+      </div>
+
+      <!-- Projects -->
+      <div class="sec">🚀 Projects</div>
+      <div class="projects">
+        <div class="proj-card">
+          <div class="proj-title">🔐 Quantum Secure Chat Application</div>
+          <div class="proj-desc">Secure platform implementing post-quantum cryptographic algorithms (Kyber/Dilithium) for encrypted messaging.</div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-title">⚖️ Indian Constitution Learning Platform</div>
+          <div class="proj-desc">Educational web platform with role-based authentication, MongoDB schemas, and interactive quizzes.</div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-title">🎵 Music Streaming Web Application</div>
+          <div class="proj-desc">Responsive streaming site with playlist creation, optimized UI, and smooth audio playback.</div>
+        </div>
+      </div>
+
+      <!-- Activities -->
+      <div class="sec">🎉 Leadership</div>
+      <div class="skills" style="margin-bottom:22px;">
+        <span class="skill">🛡️ Head of Quality Assurance</span>
+        <span class="skill">⚖️ Discipline Committee</span>
+        <span class="skill">📦 Logistics Coordinator</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="sec">⚡ Quick Actions</div>
+      <div class="btn-grid">
+        <a href="tel:+919360864338" class="btn btn-call">📞 Call</a>
+        <a href="mailto:akshayamanian07@gmail.com" class="btn btn-email">✉️ Email</a>
+        <a href="https://wa.me/919360864338" target="_blank" class="btn btn-wa">💬 WhatsApp</a>
+        <a href="https://linkedin.com/in/akshaya-manian07" target="_blank" class="btn btn-li">🔗 LinkedIn</a>
+        <button onclick="saveContact()" class="btn btn-full">💾 Save Contact to Phone</button>
+      </div>
+
+      <!-- Quote 2 -->
+      <div class="quote2">
+        <p>🌟 "The best way to predict the future is to create it." — Every connection matters, every idea has potential. Let's innovate together! 💫</p>
+      </div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="card-footer">
+      🔒 Verified Digital Identity Card &nbsp;|&nbsp; <strong>Xpertio Technologies</strong><br />
+      📡 Powered by NFC Smart Tag Technology
+    </div>
+
+  </div>
+
+  <script>
+    function saveContact() {
+      const vCard = `BEGIN:VCARD
+VERSION:3.0
+FN:Akshaya M
+N:M;Akshaya;;;
+ORG:Xpertio Technologies
+TITLE:CXO
+TEL;TYPE=CELL:+919360864338
+EMAIL:akshayamanian07@gmail.com
+ADR;TYPE=HOME:;;Aanaiyur;Madurai;Tamil Nadu;;India
+URL:https://linkedin.com/in/akshaya-manian07
+END:VCARD`;
+      const blob = new Blob([vCard], { type: 'text/vcard' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = 'Akshaya_M_Xpertio.vcf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+    }
+
+    /* Stagger-reveal on scroll */
+    const items = document.querySelectorAll(
+      '.info-item, .btn, .skill, .proj-card, .stat'
+    );
+    items.forEach(el => {
+      el.style.opacity   = '0';
+      el.style.transform = 'translateY(14px)';
+      el.style.transition= 'opacity 0.45s ease, transform 0.45s ease';
+    });
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => {
+            e.target.style.opacity   = '1';
+            e.target.style.transform = 'translateY(0)';
+          }, i * 60);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    items.forEach(el => io.observe(el));
+  </script>
+
+</body>
+</html>
+w
